@@ -17,19 +17,121 @@
 }
 
 .App-header {
-  background-color: #282c34;
+  background-color: #6b707a;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   font-size: calc(10px + 2vmin);
   color: white;
+  width: 100%;
+  max-width: 100%; 
 }
 
 .App-section {
   flex: 1 1 0;
   background-color: hsl(220deg 13% 13%);
   color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%; 
+  max-width: 100%;
+  margin: auto;
+  box-sizing: border-box;
+}
+
+.controls {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.controls button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  font-size: 1rem;
+  color: #080808;
+  background-color: #e2e5ec;
+  border: 1px solid #f4fbfd;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.controls button:hover {
+  background-color: #81d386;
+}
+
+.skill-check-results {
+  background-color: #333;
+  margin-left: 20px;
+  margin-right: 20px;
+  margin-top: 20px;;
+  margin-bottom: 20px;
+  width: 100%;
+  text-align: center;
+}
+
+.attributes, .classes, .skills {
+  background-color: #333;
+  padding: 20px;
+  margin-left: 20px;
+  margin-right: 20px;
+  margin-top: 20px;;
+  margin-bottom: 20px;
+  width: 100%;
+  text-align: center;
+  border-radius: 20px;
+  text-align: center;
+  
+}
+
+.character {
+  background-color: #222;
+  border-radius: 8px;
+  margin-top: 20px;
+  width: 100%;
+}
+
+.character-details {
+  display: flex;
+  justify-content: space-between;
+}
+
+.character-checks {
+  background-color: #333;
+  padding: 20px;
+  margin: 20px;
+  border-radius: 20px;
+  width: calc(100% - 40px);
+  box-sizing: border-box;
+  text-align: center;
+}
+
+.skill-check-results h2, .character-check h3, .attributes h3, .classes h3, .skills h3 {
+  margin-bottom: 20px;
+}
+
+button {
+  color: #080808;
+  background-color: #d0d8da; 
+  border: none;
+  width: auto; 
+  height: auto;
+  border-radius: 25%; 
+  cursor: pointer;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2); 
+  font-size: 16px; 
+  display: inline-flex; 
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  margin-left: 3px;
+  margin-right: 3px;
+}
+
+button:hover {
+  background-color: #21a1f1;
 }
 
 .App-link {

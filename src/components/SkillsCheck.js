@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { SKILL_LIST } from '../consts';
 import { useAttributes } from '../AttributesContext';
 
-function CharacterCheck({ characterIndex }) {
+function CharacterCheck({ characterIndex, onRoll }) {
   const { characters, dispatch } = useAttributes();
   const character = characters[characterIndex];
   const { skillCheckResult } = character;
@@ -19,6 +19,7 @@ function CharacterCheck({ characterIndex }) {
       index: characterIndex,
     });
     console.log(skillCheckResult);
+    onRoll();
   };
 
   return (

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import './App.css';
 import axios from 'axios';
 import { useAttributes } from './AttributesContext.js';
@@ -14,6 +14,7 @@ import Skills from './components/Skills.js'
 function App() {
   const { dispatch, characters } = useAttributes();
   const githubUsername = 'RF0606';
+  const [selectedCharacterIndex, setSelectedCharacterIndex] = useState(0);
 
   useEffect(() => {
 
@@ -45,6 +46,10 @@ function App() {
   // 确保 characters 为数组
   const validCharacters = Array.isArray(characters) ? characters : [];
 
+  const handleRoll = (index) => {
+    setSelectedCharacterIndex(index);
+  }
+
 
   return (
     <div className="App">
@@ -54,13 +59,16 @@ function App() {
 
       <section className="App-section">
         <Controls />
-
+        <SkillCheckResults characterIndex={selectedCharacterIndex} />
+        
         {validCharacters.length > 0 ? (
           validCharacters.map((character, index) => (
             <div key={index} className="character">
-              <SkillCheckResults characterIndex={index} />
               <div className='character-checks'>
-                <SkillsCheck characterIndex={index} />
+                <SkillsCheck
+                  characterIndex={index}
+                  onRoll={() => handleRoll(index)}
+                />
               </div>
 
               <div className="character-details">

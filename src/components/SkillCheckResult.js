@@ -8,7 +8,7 @@ function SkillCheckResults({ characterIndex }) {
     const { selectedSkill, dc, rollResult, skillTotal } = skillCheckResult;
 
     // 检查 characters 是否有效，以及是否存在指定索引的角色
-    if (!Array.isArray(characters) || !characters[characterIndex]) {
+    if (characterIndex === null || !characters[characterIndex]) {
         return (
             <div className="skill-check-results">
                 <h2>Skill Check Results</h2>

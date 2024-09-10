@@ -9,6 +9,7 @@ import SkillsCheck from './components/SkillsCheck.js'
 import Attributes from './components/Attributes.js'
 import Classes from './components/Classes.js'
 import Skills from './components/Skills.js'
+import PartySkillCheck from './components/PartySkillCheck.js'
 
 
 function App() {
@@ -60,6 +61,7 @@ function App() {
       <section className="App-section">
         <Controls />
         <SkillCheckResults characterIndex={selectedCharacterIndex} />
+        <PartySkillCheck setSelectedCharacterIndex={setSelectedCharacterIndex}/>
         
         {validCharacters.length > 0 ? (
           validCharacters.map((character, index) => (

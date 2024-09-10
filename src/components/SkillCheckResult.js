@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect }  from 'react';
 import { useAttributes } from '../AttributesContext';
 
 
@@ -7,7 +7,11 @@ function SkillCheckResults({ characterIndex }) {
     const { skillCheckResult } = characters[characterIndex];
     const { selectedSkill, dc, rollResult, skillTotal } = skillCheckResult;
 
-    // 检查 characters 是否有效，以及是否存在指定索引的角色
+    useEffect(() => {
+        // console.log('SkillCheckResults: characterIndex or characters changed', characterIndex, characters);
+    }, [characterIndex, characters]);
+
+    // check if characters valid
     if (characterIndex === null || !characters[characterIndex]) {
         return (
             <div className="skill-check-results">
@@ -17,7 +21,7 @@ function SkillCheckResults({ characterIndex }) {
         );
     }
 
-    // 如果 skillCheckResult 为空或未定义，提供一个默认值
+    // if skillCheckResult is null or undefined, give a defult
     if (!skillCheckResult || Object.keys(skillCheckResult).length === 0) {
         return (
             <div className="skill-check-results">

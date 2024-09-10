@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import { CLASS_LIST } from '../consts';
 import { useAttributes } from '../AttributesContext';
 
-function Classes() {
-  const { attributes } = useAttributes();
+function Classes({ characterIndex }) {
+  const { characters } = useAttributes();
+  const character = characters[characterIndex];
+  const { attributes } = character;
   const [selectedClass, setSelectedClass] = useState(null);
 
   // check if meet requirements

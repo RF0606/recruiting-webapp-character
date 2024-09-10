@@ -12,10 +12,13 @@ import Skills from './components/Skills.js'
 
 
 function App() {
-  const { dispatch } = useAttributes();
+  const { dispatch, characters } = useAttributes();
   const githubUsername = 'RF0606';
 
   useEffect(() => {
+
+    console.log('Characters on initial load:', characters);
+
     //fetch data
     const fetchData = async () => {
       try {
@@ -37,7 +40,10 @@ function App() {
     };
 
     fetchData();
-  }, [dispatch, githubUsername]);
+  }, [dispatch, githubUsername, characters]);
+
+  // 确保 characters 为数组
+  const validCharacters = Array.isArray(characters) ? characters : [];
 
 
   return (
@@ -48,19 +54,25 @@ function App() {
 
       <section className="App-section">
         <Controls />
-        <SkillCheckResults />
-        
-        <div className="character">
-          <div className='character-checks'>
-            <SkillsCheck />
-          </div>
 
-          <div className="character-details">
-            <Attributes />
-            <Classes />
-            <Skills />
-          </div>
-        </div>
+        {validCharacters.length > 0 ? (
+          validCharacters.map((character, index) => (
+            <div key={index} className="character">
+              <SkillCheckResults characterIndex={index} />
+              <div className='character-checks'>
+                <SkillsCheck characterIndex={index} />
+              </div>
+
+              <div className="character-details">
+                <Attributes characterIndex={index} />
+                <Classes characterIndex={index} />
+                <Skills characterIndex={index} />
+              </div>
+            </div>
+          ))
+        ) : (
+          <p>No characters available.</p>
+        )}
       </section>
     </div>
   );

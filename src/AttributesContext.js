@@ -27,8 +27,8 @@ const calculateAvailableSkillPoints = (intelligenceModifier) => { return 10 + 4 
 const initialAvailableSkillPoints = calculateAvailableSkillPoints(initialModifiers.Intelligence)
 
 
-// initialized state
-const initialState = {
+// initial character state
+const initialCharacterState = {
     attributes: initialAttributes,
     modifiers: initialModifiers,
     skills: initialSkills,
@@ -36,94 +36,137 @@ const initialState = {
     skillCheckResult: [],
 };
 
+
+// initialized state as array
+const initialState = {
+    characters: [initialCharacterState],
+};
+
 const AttributesContext = createContext();
 
 const attributesReducer = (state, action) => {
+    const updatedCharacters = [...state.characters];
+    const character = updatedCharacters[action.index];
+
     switch (action.type) {
         // attribute increase
         case 'INCREMENT_ATTRIBUTE':
+
+            if (!character) return state; // check if character exist
+
             const increasedAttributes = {
-                ...state.attributes,
-                [action.payload]: state.attributes[action.payload] + 1,
+                ...character.attributes,
+                [action.payload]: character.attributes[action.payload] + 1,
             };
-            const incresedModifiers = {
-                ...state.modifiers,
+            const increasedModifiers = {
+                ...character.modifiers,
                 [action.payload]: Math.floor((increasedAttributes[action.payload] - 10) / 2),
             };
-            const increasedAvailableSkillPoints = calculateAvailableSkillPoints(incresedModifiers.Intelligence);
+            const increasedAvailableSkillPoints = calculateAvailableSkillPoints(increasedModifiers.Intelligence);
+
+            updatedCharacters[action.index] = {
+                ...character,
+                attributes: increasedAttributes,
+                modifiers: increasedModifiers,
+                availableSkillPoints: increasedAvailableSkillPoints - Object.values(character.skills).reduce((sum, val) => sum + val, 0),
+            };
+
             return {
                 ...state,
-                attributes: increasedAttributes,
-                modifiers: incresedModifiers,
-                availableSkillPoints: increasedAvailableSkillPoints - Object.values(state.skills).reduce((sum, val) => sum + val, 0),
+                characters: updatedCharacters,
             };
 
 
         // attribute decrease
         case 'DECREMENT_ATTRIBUTE':
+
+            if (!character) return state; // check if character exist
+
             const decreasedAttributes = {
-                ...state.attributes,
-                [action.payload]: state.attributes[action.payload] - 1,
+                ...character.attributes,
+                [action.payload]: character.attributes[action.payload] - 1,
             };
             const decreasedModifiers = {
-                ...state.modifiers,
+                ...character.modifiers,
                 [action.payload]: Math.floor((decreasedAttributes[action.payload] - 10) / 2),
             };
             const decreasedAvailableSkillPoints = calculateAvailableSkillPoints(decreasedModifiers.Intelligence);
-            return {
-                ...state,
+
+            updatedCharacters[action.index] = {
+                ...character,
                 attributes: decreasedAttributes,
                 modifiers: decreasedModifiers,
-                availableSkillPoints: decreasedAvailableSkillPoints - Object.values(state.skills).reduce((sum, val) => sum + val, 0),
+                availableSkillPoints: decreasedAvailableSkillPoints - Object.values(character.skills).reduce((sum, val) => sum + val, 0),
+            };
+
+
+            return {
+                ...state,
+                characters: updatedCharacters,
             };
 
 
         // skill increase
         case 'INCREMENT_SKILL': {
-            if (state.availableSkillPoints <= 0) {
+            if (!character || character.availableSkillPoints <= 0) {
                 alert("No available skill points left.");
                 return state;
             }
             const newSkills = {
-                ...state.skills,
-                [action.payload]: state.skills[action.payload] + 1,
+                ...character.skills,
+                [action.payload]: character.skills[action.payload] + 1,
             };
+
+            updatedCharacters[action.index] = {
+                ...character,
+                skills: newSkills,
+                availableSkillPoints: character.availableSkillPoints - 1,
+            };
+
             return {
                 ...state,
-                skills: newSkills,
-                availableSkillPoints: state.availableSkillPoints - 1,
+                characters: updatedCharacters,
             };
         }
 
 
         // skill decrease
         case 'DECREMENT_SKILL': {
-            if (state.skills[action.payload] <= 0) {
+            if (!character || character.skills[action.payload] <= 0) {
                 return state;
             }
             const newSkills = {
-                ...state.skills,
-                [action.payload]: state.skills[action.payload] - 1,
+                ...character.skills,
+                [action.payload]: character.skills[action.payload] - 1,
             };
+
+            updatedCharacters[action.index] = {
+                ...character,
+                skills: newSkills,
+                availableSkillPoints: character.availableSkillPoints + 1,
+            };
+
             return {
                 ...state,
-                skills: newSkills,
-                availableSkillPoints: state.availableSkillPoints + 1,
+                characters: updatedCharacters,
             };
         }
 
 
         // check skills status
         case 'CHECK_SKILL': {
+
+            if (!character) return state; // check if character exist
+
             const { selectedSkill, dc } = action.payload;
             const randomRoll = Math.floor(Math.random() * 20) + 1;
-            const skillModifier = state.modifiers[SKILL_LIST.find(skill => skill.name === selectedSkill).attributeModifier];
-            const skillTotal = state.skills[selectedSkill] + skillModifier;
+            const skillModifier = character.modifiers[SKILL_LIST.find(skill => skill.name === selectedSkill).attributeModifier];
+            const skillTotal = character.skills[selectedSkill] + skillModifier;
             const total = skillTotal + randomRoll;
             const isSuccess = total >= dc;
 
-            return {
-                ...state,
+            updatedCharacters[action.index] = {
+                ...character,
                 skillCheckResult: {
                     selectedSkill,
                     dc,
@@ -132,18 +175,36 @@ const attributesReducer = (state, action) => {
                     total,
                     isSuccess,
                 },
+            }
+
+            return {
+                ...state,
+                characters: updatedCharacters,
+            };
+        }
+
+        case 'ADD_NEW_CHARACTER': {
+            return {
+                ...state,
+                characters: [...state.characters, initialCharacterState],
             };
         }
 
 
         // reset all
         case 'RESET_ALL': {
-            return {
-                attributes: initialAttributes,
-                modifiers: initialModifiers,
-                skills: initialSkills,
+            // iterate every character to reset
+            const resetCharacters = state.characters.map(() => ({
+                attributes: { ...initialAttributes },
+                modifiers: { ...initialModifiers },
+                skills: { ...initialSkills },
                 availableSkillPoints: initialAvailableSkillPoints,
-                skillCheckResult: [],
+                skillCheckResult: {},
+            }));
+
+            return {
+                ...state,
+                characters: resetCharacters,
             };
         }
 
@@ -160,11 +221,7 @@ export const AttributesProvider = ({ children }) => {
     return (
         <AttributesContext.Provider
             value={{
-                attributes: state.attributes,
-                modifiers: state.modifiers,
-                skills: state.skills,
-                availableSkillPoints: state.availableSkillPoints,
-                skillCheckResult: state.skillCheckResult,
+                characters: state.characters,
                 dispatch,
             }}
         >

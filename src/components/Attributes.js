@@ -1,8 +1,10 @@
 import React from 'react';
 import { useAttributes } from '../AttributesContext';
 
-function Attributes() {
-  const { attributes, modifiers, dispatch } = useAttributes();
+function Attributes({ characterIndex }) {
+  const { characters, dispatch } = useAttributes();
+  const character = characters[characterIndex];
+  const { attributes, modifiers } = character;
   const totalAttributes = Object.values(attributes).reduce((sum, value) => sum + value, 0);
 
   // increase attributes
@@ -10,13 +12,14 @@ function Attributes() {
     if (totalAttributes >= 70) {
       alert("Total attributes cannot exceed 70.");
     } else {
-      dispatch({ type: 'INCREMENT_ATTRIBUTE', payload: attr });
+      dispatch({ type: 'INCREMENT_ATTRIBUTE', payload: attr, index: characterIndex });
+      console.log(character);
     }
   };
 
   // decrease attributes
   const handleDecrement = (attr) => {
-    dispatch({ type: 'DECREMENT_ATTRIBUTE', payload: attr });
+    dispatch({ type: 'DECREMENT_ATTRIBUTE', payload: attr, index: characterIndex });
   };
 
 

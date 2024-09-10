@@ -2,17 +2,19 @@ import React from 'react';
 import { useAttributes } from '../AttributesContext';
 import { SKILL_LIST } from '../consts';
 
-function Skills() {
-  const { skills, modifiers, availableSkillPoints, dispatch } = useAttributes();
+function Skills({ characterIndex }) {
+  const { characters, dispatch } = useAttributes();
+  const character = characters[characterIndex];
+  const { skills, modifiers, availableSkillPoints } = character;
 
   //handle increase
   const handleIncrement = (skillName) => {
-    dispatch({ type: 'INCREMENT_SKILL', payload: skillName });
+    dispatch({ type: 'INCREMENT_SKILL', payload: skillName, index: characterIndex });
   };
 
   //handle decrease
   const handleDecrement = (skillName) => {
-    dispatch({ type: 'DECREMENT_SKILL', payload: skillName });
+    dispatch({ type: 'DECREMENT_SKILL', payload: skillName, index: characterIndex });
   };
 
   return (
